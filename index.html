@@ -1896,7 +1896,19 @@ async function enableUser(id){
   await updateDoc(doc(db,'users',id),{isApproved:true,status:'approved'});
   toast(id+' เปิดใช้งานแล้ว','ok');
 }
-
+async function deleteUser(id){
+  const u = DB.users.find(x=>x.id===id);
+  if(!u){ toast('ไม่พบผู้ใช้','warn'); return; }
+  if(u.position==='admin'){ toast('ไม่สามารถลบ Admin ได้','warn'); return; }
+  if(u.id === DB.cur.uid){ toast('ไม่สามารถลบตัวเองได้','warn'); return; }
+  if(!confirm('ยืนยันลบ "'+u.name+'" ออกจากระบบ?')) return;
+  try {
+    const { deleteDoc, doc: fsDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    await deleteDoc(fsDoc(db,'users',id));
+    toast(u.name+' ลบแล้ว','ok');
+  } catch(err){
+    toast('ลบไม่สำเร็จ: '+err.message,'warn');
+  }
 // ═══════════════════════════════════════════════════════════════════
 // ADMIN SCREENS
 // ═══════════════════════════════════════════════════════════════════
