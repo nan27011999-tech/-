@@ -1909,7 +1909,6 @@ async function deleteUser(id){
   } catch(err){
     toast('ลบไม่สำเร็จ: '+err.message,'warn');
   }
-  window.deleteUser = deleteUser;
 // ═══════════════════════════════════════════════════════════════════
 // ADMIN SCREENS
 // ═══════════════════════════════════════════════════════════════════
@@ -2556,7 +2555,13 @@ async function showFirebaseStatus() {
   }
 }
 
-showLogin();
+window.deleteUser       = deleteUser;
+window.approveUser      = approveUser;
+window.rejectUser       = rejectUser;
+window.disableUser      = disableUser;
+window.enableUser       = enableUser;
+window.adminApproveUser = adminApproveUser;
+showLogin();  
 initFirebase();
 </script>
 </body>
