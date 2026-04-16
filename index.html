@@ -2555,18 +2555,20 @@ async function showFirebaseStatus() {
   }
 }
 
-window.deleteUser = function(id){
+window.deleteUser = async function(id){
   const u=DB.users.find(x=>x.id===id);
   if(!u){alert('ไม่พบผู้ใช้');return;}
   if(u.position==='admin'){alert('ไม่สามารถลบ Admin ได้');return;}
   if(u.id===DB.cur.uid){alert('ไม่สามารถลบตัวเองได้');return;}
-  if(!confirm('ยืนยันลบ "'+u.name+'" ออกจากระบบ?'))return;
-  import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
-    .then(({deleteDoc,doc:fd})=>{
-      deleteDoc(fd(db,'users',id))
-        .then(()=>{ go(curScreen); toast(u.name+' ลบแล้ว','ok'); })
-        .catch(err=>alert('ลบไม่สำเร็จ: '+err.message));
-    });
+  if(!confirm('ยืนยันลบ "'+u.name+'" ?\n\nอีเมลนี้จะสามารถสมัครใหม่ได้'))return;
+  try {
+    const {deleteDoc,doc:fd}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    await deleteDoc(fd(db,'users',id));
+    toast(u.name+' ลบแล้ว — อีเมลนี้สมัครใหม่ได้','ok');
+    go(curScreen);
+  } catch(err){
+    alert('ลบไม่สำเร็จ: '+err.message);
+  }
 };
 window.approveUser      = approveUser;
 window.rejectUser       = rejectUser;
