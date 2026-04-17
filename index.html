@@ -2048,26 +2048,26 @@ function rAdminUsers(el){
       const stsLbl  = u.status==='approved'?'✓ ใช้งาน':u.status==='pending'?'⏳ รออนุมัติ':u.status==='disabled'?'⛔ ระงับ':'✗ ปฏิเสธ';
       let acts = '';
       if(!isAdmin && !isSelf) {
-        if(u.status==='approved')  acts += \`<button class="bs b-rj" onclick="disableUser('\${u.id}')">\${t('disableBtn')}</button>\`;
-        if(u.status==='disabled')  acts += \`<button class="bs b-ap" onclick="enableUser('\${u.id}')">\${t('enableBtn')}</button>\`;
-        if(u.status==='pending'||u.status==='rejected') acts += \`<button class="bs b-ap" onclick="adminApproveUser('\${u.id}')">อนุมัติ</button>\`;
-        acts += \`<button class="bs" style="background:#FCEBEB;color:#791F1F" onclick="removeUser('\${u.id}')">\${t('deleteBtn')}</button>\`;
+        if(u.status==='approved')  acts += `<button class="bs b-rj" onclick="disableUser('${u.id}')">${t('disableBtn')}</button>`;
+        if(u.status==='disabled')  acts += `<button class="bs b-ap" onclick="enableUser('${u.id}')">${t('enableBtn')}</button>`;
+        if(u.status==='pending'||u.status==='rejected') acts += `<button class="bs b-ap" onclick="adminApproveUser('${u.id}')">อนุมัติ</button>`;
+        acts += `<button class="bs" style="background:#FCEBEB;color:#791F1F" onclick="removeUser('${u.id}')">${t('deleteBtn')}</button>`;
       } else {
-        acts = \`<span style="font-size:10px;color:var(--text3)">\${isSelf?'(บัญชีของคุณ)':'(Admin)'}</span>\`;
+        acts = `<span style="font-size:10px;color:var(--text3)">${isSelf?'(บัญชีของคุณ)':'(Admin)'}</span>`;
       }
-      return \`<div class="dr">
+      return `<div class="dr">
         <div class="dm">
-          <div class="dt">\${u.name} — \${u.dept}</div>
-          <div class="dd">\${u.email||u.phone||''} · \${u.date||''}</div>
+          <div class="dt">${u.name} — ${u.dept}</div>
+          <div class="dd">${u.email||u.phone||''} · ${u.date||''}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
-          <span class="bk \${posColors[u.overrideRole||u.position]||'bk-gy'}">\${u.posLabel||u.position}\${u.overrideRole&&u.overrideRole!==u.position?' ✏️':''}</span>
-          <span class="bk \${stsBk}">\${stsLbl}</span>
+          <span class="bk ${posColors[u.overrideRole||u.position]||'bk-gy'}">${u.posLabel||u.position}${u.overrideRole&&u.overrideRole!==u.position?' ✏️':''}</span>
+          <span class="bk ${stsBk}">${stsLbl}</span>
         </div>
-        <div class="da">\${acts}</div>
-      </div>\`;
+        <div class="da">${acts}</div>
+      </div>`;
     }).join('')}
-  </div>\`;
+  </div>`;
 }
 
 async function adminApproveUser(id){
