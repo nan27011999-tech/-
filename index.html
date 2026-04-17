@@ -331,7 +331,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans Thai','N
   </div>
 </div>
 
-<div class="toast-wrap" id="TOASTS"></div>
+<!-- ADMIN CREATE USER OVERLAY -->
+<div class="manual-overlay" id="AC-OVERLAY">
+  <div class="manual-card" style="width:480px">
+    <div class="manual-head">
+      <div style="font-size:14px;font-weight:600">👤➕ <span data-t="adminCreateTitle">สมัครใช้งานให้พนักงาน</span></div>
+      <button class="bs b-rj" onclick="closeAdminCreate()">✕</button>
+    </div>
+    <div class="manual-body">
+      <div class="nb-box nb-am" style="margin-bottom:12px">⚠️ <span data-t="adminCreateNote">หลังสร้างบัญชีสำเร็จ ระบบจะออกจาก Admin อัตโนมัติ กรุณา Login กลับเข้าเพื่อใช้งานต่อ</span></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl" data-t="firstName">ชื่อจริง *</div><input class="fi" id="ac-fname" placeholder="ชื่อจริง"></div>
+        <div class="fg"><div class="fl" data-t="lastName">นามสกุล *</div><input class="fi" id="ac-lname" placeholder="นามสกุล"></div>
+      </div>
+      <div class="fg"><div class="fl" data-t="email">อีเมลองค์กร *</div><input class="fi" id="ac-email" type="email" placeholder="name@company.com"></div>
+      <div class="fg"><div class="fl" data-t="phone">เบอร์โทร *</div><input class="fi" id="ac-phone" type="tel" placeholder="08x-xxx-xxxx"></div>
+      <div class="fr2">
+        <div class="fg"><div class="fl" data-t="dept">แผนก *</div>
+          <select class="fi" id="ac-dept">
+            <option value="">-- เลือกแผนก --</option>
+            <option value="HR / Admin">HR / Admin</option>
+            <option value="บัญชี">บัญชี</option>
+            <option value="ผู้บริหาร">ผู้บริหาร</option>
+            <option value="ฝ่ายขาย">ฝ่ายขาย</option>
+            <option value="ฝ่ายผลิต">ฝ่ายผลิต</option>
+            <option value="การตลาด">การตลาด</option>
+            <option value="IT">IT</option>
+          </select>
+        </div>
+        <div class="fg"><div class="fl" data-t="position">ตำแหน่ง/สิทธิ์ *</div>
+          <select class="fi" id="ac-position">
+            <option value="">-- เลือกตำแหน่ง --</option>
+            <option value="emp">พนักงานทั่วไป</option>
+            <option value="hr">HR / Admin</option>
+            <option value="acc">บัญชี</option>
+            <option value="mgr">ผู้จัดการ</option>
+            <option value="exec">ผู้บริหาร (CEO)</option>
+            <option value="exec2">ผู้บริหาร (CFO)</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><div class="fl" data-t="tempPass">รหัสผ่านชั่วคราว *</div>
+        <div style="display:flex;gap:6px">
+          <input class="fi" id="ac-pass" type="text" placeholder="อย่างน้อย 8 ตัวอักษร" style="flex:1">
+          <button class="bo" onclick="genTempPass()" style="font-size:10px;padding:4px 10px;white-space:nowrap">🎲 <span data-t="generatePass">สุ่ม</span></button>
+        </div>
+      </div>
+      <div class="nb-box nb-gn" style="margin-top:8px">✅ <span data-t="adminCreateHelp">บัญชีจะถูกอนุมัติทันที + ส่งอีเมลให้พนักงานตั้งรหัสผ่านใหม่</span></div>
+      <div class="fa" style="margin-top:14px">
+        <button class="bo" onclick="closeAdminCreate()" data-t="btnCancel">ยกเลิก</button>
+        <button class="bp" onclick="doAdminCreateUser()" data-t="createAndSendEmail">สร้างบัญชี + ส่งอีเมลตั้งรหัส</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="toast-wrap" id="TOASTS"></div>
 </div>
 
 <script>
@@ -1992,6 +2046,9 @@ function rAdminUsers(el){
   el.innerHTML=`
   <div class="sec-badge" style="background:var(--blue-light);color:var(--blue);margin-bottom:12px">👤 จัดการสิทธิ์ผู้ใช้งาน</div>
   <div class="nb-box nb-bl" style="margin-bottom:12px">🔐 Admin สามารถกำหนดสิทธิ์ตามที่ผู้ใช้เลือก หรือเปลี่ยนแปลงสิทธิ์ได้เองก่อนอนุมัติ</div>
+ <div style="margin-bottom:12px;display:flex;gap:6px;flex-wrap:wrap">
+    <button class="bp bs" onclick="showAdminCreate()" style="font-size:11px;padding:6px 12px">👤➕ <span data-t="adminCreateBtn">สมัครใช้งานให้พนักงาน</span></button>
+  </div> 
   <div style="background:var(--bg2);border-radius:9px;padding:11px 13px;margin-bottom:12px">
     <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px">📥 Export ข้อมูลผู้ใช้ (.csv)</div>
     <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">
@@ -2622,6 +2679,95 @@ showLogin = function() {
   if (fp) fp.style.display = 'none';
 };
 
+// ═══════════════════════════════════════════════════════════════════
+// NEW FEATURE: Admin Create User (ฟีเจอร์ 2)
+// ═══════════════════════════════════════════════════════════════════
+function showAdminCreate() {
+  if (!DB.cur || DB.cur.key !== 'admin') { toast('เฉพาะ Admin เท่านั้น','warn'); return; }
+  ['ac-fname','ac-lname','ac-email','ac-phone','ac-pass'].forEach(id => {
+    const e = document.getElementById(id); if(e) e.value = '';
+  });
+  const ds = document.getElementById('ac-dept'); if(ds) ds.value = '';
+  const ps = document.getElementById('ac-position'); if(ps) ps.value = '';
+  document.getElementById('AC-OVERLAY').classList.add('open');
+}
+
+function closeAdminCreate() {
+  document.getElementById('AC-OVERLAY').classList.remove('open');
+}
+
+function genTempPass() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let p = '';
+  for (let i = 0; i < 10; i++) p += chars.charAt(Math.floor(Math.random() * chars.length));
+  const el = document.getElementById('ac-pass');
+  if (el) el.value = p;
+}
+
+async function doAdminCreateUser() {
+  const fname = (document.getElementById('ac-fname')||{}).value.trim()||'';
+  const lname = (document.getElementById('ac-lname')||{}).value.trim()||'';
+  const email = (document.getElementById('ac-email')||{}).value.trim()||'';
+  const phone = (document.getElementById('ac-phone')||{}).value.trim()||'';
+  const dept  = (document.getElementById('ac-dept')||{}).value||'';
+  const pos   = (document.getElementById('ac-position')||{}).value||'';
+  const pass  = (document.getElementById('ac-pass')||{}).value||'';
+
+  if (!fname || !lname) { toast('กรุณากรอกชื่อ-นามสกุล','warn'); return; }
+  if (!email || !email.includes('@')) { toast('กรุณากรอกอีเมลให้ถูกต้อง','warn'); return; }
+  if (!phone) { toast('กรุณากรอกเบอร์โทร','warn'); return; }
+  if (!dept)  { toast('กรุณาเลือกแผนก','warn'); return; }
+  if (!pos)   { toast('กรุณาเลือกตำแหน่ง','warn'); return; }
+  if (pass.length < 8) { toast('รหัสผ่านชั่วคราวต้องมีอย่างน้อย 8 ตัวอักษร','warn'); return; }
+
+  const posLabels = {
+    emp:'พนักงานทั่วไป', hr:'HR / Admin', acc:'ฝ่ายบัญชี',
+    mgr:'ผู้จัดการ', exec:'ผู้บริหาร (CEO)', exec2:'ผู้บริหาร (CFO)'
+  };
+
+  try {
+    const { sendPasswordResetEmail } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await setDoc(doc(db, 'users', cred.user.uid), {
+      uid: cred.user.uid,
+      name: fname + ' ' + lname,
+      email: email,
+      phone: phone,
+      dept: dept,
+      position: pos,
+      posLabel: posLabels[pos] || pos,
+      status: 'approved',
+      isApproved: true,
+      createdBy: 'admin',
+      createdByAdmin: DB.cur.name,
+      mustChangePassword: true,
+      createdAt: serverTimestamp(),
+      approvedAt: serverTimestamp(),
+    });
+    // ส่งอีเมลให้พนักงานตั้งรหัสผ่านใหม่
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch(e) { /* ไม่ critical */ }
+    // Sign out บัญชีใหม่ (Firebase auto sign-in เป็น user ใหม่)
+    await signOut(auth);
+    closeAdminCreate();
+    toast('✅ สร้างบัญชี ' + fname + ' ' + lname + ' สำเร็จ — ส่งอีเมลตั้งรหัสให้แล้ว','ok');
+    setTimeout(() => {
+      toast('⚠️ กรุณา Login กลับเข้าเป็น Admin','warn');
+    }, 1500);
+  } catch(err) {
+    const msg = err.code === 'auth/email-already-in-use' ? 'อีเมลนี้มีบัญชีอยู่แล้ว'
+              : err.code === 'auth/invalid-email' ? 'รูปแบบอีเมลไม่ถูกต้อง'
+              : err.code === 'auth/weak-password' ? 'รหัสผ่านอ่อนเกินไป'
+              : 'สร้างบัญชีล้มเหลว: ' + err.message;
+    toast(msg, 'warn');
+  }
+}
+
+window.showAdminCreate     = showAdminCreate;
+window.closeAdminCreate    = closeAdminCreate;
+window.genTempPass         = genTempPass;
+window.doAdminCreateUser   = doAdminCreateUser;
 window.showForgotPassword = showForgotPassword;
 window.doSendReset        = doSendReset;
 window.removeUser        = removeUser;
