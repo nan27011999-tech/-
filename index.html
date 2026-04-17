@@ -1919,8 +1919,7 @@ async function removeUser(id){
   // ป้องกันลบ Admin และตัวเอง
   if(u.position==='admin'||u.overrideRole==='admin'){ toast('ไม่สามารถลบ Admin ได้','warn'); return; }
   if(id === DB.cur.uid){ toast('ไม่สามารถลบบัญชีตัวเองได้','warn'); return; }
-  const confirm = window.confirm('ยืนยันลบ "'+u.name+'" ออกจากระบบ?
-(ข้อมูลใน Firestore จะถูกลบถาวร)');
+  const confirm = window.confirm('ยืนยันลบ "'+u.name+'" ออกจากระบบ?\n(ข้อมูลใน Firestore จะถูกลบถาวร)');
   if(!confirm) return;
   try {
     const {deleteDoc} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
